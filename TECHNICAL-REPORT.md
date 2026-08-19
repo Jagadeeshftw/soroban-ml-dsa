@@ -1,7 +1,7 @@
 # In-contract ML-DSA on Soroban — technical report
 
 **Jagadeesh B — 19 August 2026**
-Repository: https://github.com/Jagadeeshftw/soroban-ml-dsa
+Repository: https://github.com/latticework-dev/soroban-ml-dsa
 
 ---
 
@@ -184,7 +184,7 @@ These measurements were posted to the CAP-0087 discussion thread on 19 August
 ## 7. Reproducing
 
 ```sh
-git clone https://github.com/Jagadeeshftw/soroban-ml-dsa && cd soroban-ml-dsa
+git clone https://github.com/latticework-dev/soroban-ml-dsa && cd soroban-ml-dsa
 ./demo.sh
 ```
 
