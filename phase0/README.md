@@ -1,6 +1,6 @@
 # Phase 0 probe code
 
-Throwaway investigation code backing [`../phase-0-report.md`](../phase-0-report.md).
+Throwaway investigation code from the initial feasibility work.
 This is **not** the SDK — it exists only to produce the measurements in the report.
 The real `pq-core` / `pq-stellar` layout described in the MVP plan starts at Milestone 1.
 
@@ -42,10 +42,9 @@ PQ_SECRET=<S...> (cd harness && cargo run --release --bin submit -- <SOURCE_G...
 
 `simulate` reports both per-transaction and ledger-level throughput figures.
 The ledger-level numbers follow CAP-0063 cluster semantics and are the ones that
-matter for the CAP-0087 discussion — see
-[`../phase-0.5-verification.md`](../phase-0.5-verification.md) §5.
+matter for the CAP-0087 discussion — see [`../BENCHMARK.md`](../BENCHMARK.md).
 
-Deployed testnet contracts used in [`../phase-0.5-verification.md`](../phase-0.5-verification.md):
+Deployed testnet contracts used for these probe measurements:
 
 | Contract | Address |
 |---|---|
@@ -61,6 +60,5 @@ deterministic and reproducible.
 `contract/Cargo.toml` and `account/Cargo.toml` set `opt-level = 3`.
 This is load-bearing: `opt-level = "z"` (the common Soroban default) costs
 **2.69x more CPU** on-network for the same verification, and 2.01x the fee.
-See [`../phase-0.5-verification.md`](../phase-0.5-verification.md) §4 and the
-standalone write-up
+See [`../BENCHMARK.md`](../BENCHMARK.md) and the standalone write-up
 [`../writeups/opt-level-and-lattice-crypto-on-soroban.md`](../writeups/opt-level-and-lattice-crypto-on-soroban.md).

@@ -108,6 +108,6 @@ $BOLD================================================================$RESET
   ML-DSA implementation exists. The conformance and differential testing in
   step 2 is mitigation, not assurance. Testnet only.
 
-  Figures: BENCHMARK.md    Method: phase-0.5-verification.md
+  Full figures and method: BENCHMARK.md
 $BOLD================================================================$RESET
 EOF

@@ -108,7 +108,7 @@ PQ_SECRET=<S...> cargo run --release --bin submit -- <SOURCE_G...> <ACCOUNT_C...
 
 All key material derives from the fixed seed `[42u8; 32]` — every figure is
 deterministic. Deployed contracts are listed in
-[the verification report](phase-0.5-verification.md#testnet-artefacts).
+[BENCHMARK.md](BENCHMARK.md).
 
 ## Supporting detail
 
@@ -144,9 +144,6 @@ at 4.3%.
 |---|---|
 | [**TECHNICAL-REPORT.md**](TECHNICAL-REPORT.md) | **Start here.** What was built, measured, and found; limitations; relationship to CAP-0087. |
 | [**BENCHMARK.md**](BENCHMARK.md) | **Current cost reference.** Ledger throughput, cost split, message-length linearity, secp256r1 baseline. Cite this for figures. |
-| [Phase 0.5 verification](phase-0.5-verification.md) | How the measurement method was validated, and the ledger-limit finding. Figures measured against the Phase 0 probes; superseded by BENCHMARK.md by 0.5%. |
-| [Phase 0 investigation](phase-0-report.md) | Crate survey, CAP-0087 status, `__check_auth` findings. **Figures and framing superseded** — retained as the record. |
-| [MVP plan](Pq-sdk-stellar-mvp-plan.md) | Scope, architecture, milestones, amendment history. |
 | [opt-level write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md) | Standalone: the 2.64x compiler-flag finding. |
 | [CAP-0087 discussion post](outreach/cap-0087-discussion-post.md) | Draft for the CAP discussion thread. |
 | [Library vendoring note](outreach/ml-dsa-library-vendoring-note.md) | `ml-dsa` vs `fips204`, answering CAP-0087's vendoring question. |
@@ -174,4 +171,4 @@ QPP names for 2026 — not an alternative to the host functions.
 
 Phase 0 and 0.5 complete. Milestone 3 (testnet transaction) delivered.
 Milestones 1–2 rebuild this properly on a reusable `pq-core` rather than the
-Phase 0 probe contracts. See the [MVP plan](Pq-sdk-stellar-mvp-plan.md).
+Phase 0 probe contracts.

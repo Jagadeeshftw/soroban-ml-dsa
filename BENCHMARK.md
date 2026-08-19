@@ -123,14 +123,13 @@ Full detail: [`writeups/opt-level-and-lattice-crypto-on-soroban.md`](writeups/op
 
 ## Note on earlier figures
 
-[`phase-0.5-verification.md`](phase-0.5-verification.md) reports 77,119,386 for
-ML-DSA-65 (19.3% / 13.3%). That measured the **Phase 0 probe contracts**, which
-inlined `ml-dsa` directly. The contracts here are rebuilt on `pq-core`, so both
-the crypto and the contract wrapper differ slightly. The gap is **0.5%** and the
-ledger-throughput figures are unchanged (14 / 22).
+Earlier measurements taken against the **Phase 0 probe contracts** — which
+inlined `ml-dsa` directly rather than going through `pq-core` — reported
+77,119,386 for ML-DSA-65 (19.3% / 13.3%). The contracts measured here are built
+on `pq-core`, so both the crypto path and the contract wrapper differ slightly.
+The gap is **0.5%**, and the ledger-throughput figures are unchanged (14 / 22).
 
-Numbers on this page are the current reference. The Phase 0.5 report is retained
-as the record of what was measured then.
+Numbers on this page are the current reference.
 
 ## Standing caveat
 
