@@ -5,3 +5,8 @@ target/
 # Internal working drafts -- not for publication.
 # Contains unsent outreach and strategy notes. Publish deliberately, not by default.
 outreach/
+
+# Internal strategy: competitive positioning, ecosystem comparisons, sequencing.
+# Accurate and useful, but not material an SDF reviewer should find in a repo
+# linked from a CAP discussion thread.
+internal/
