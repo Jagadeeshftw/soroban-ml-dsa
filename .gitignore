@@ -1,0 +1,7 @@
+target/
+**/target/
+.DS_Store
+
+# Internal working drafts -- not for publication.
+# Contains unsent outreach and strategy notes. Publish deliberately, not by default.
+outreach/

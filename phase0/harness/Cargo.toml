@@ -1,0 +1,12 @@
+[package]
+name = "pq-harness"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+soroban-sdk = { version = "27.0.6", features = ["testutils"] }
+ml-dsa = { version = "0.1.1", features = ["alloc"] }
+ed25519-dalek = "2"
+sha2 = "0.10"
+serde_json = "1"
+stellar-strkey = "0.0.16"

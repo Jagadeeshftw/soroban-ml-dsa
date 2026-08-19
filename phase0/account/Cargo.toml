@@ -1,0 +1,17 @@
+[package]
+name = "pq-account"
+version = "0.1.0"
+edition = "2021"
+[lib]
+crate-type = ["cdylib"]
+[dependencies]
+soroban-sdk = "27.0.6"
+ml-dsa = { version = "0.1.1", default-features = false }
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+overflow-checks = false
+debug-assertions = false
