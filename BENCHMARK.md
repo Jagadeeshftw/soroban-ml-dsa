@@ -96,11 +96,28 @@ going from a 32-byte authorization payload to 8 KiB adds only 4.4%.
 
 ## `opt-level`
 
+Both variants built from the **same `pq-core` sources** as everything else on
+this page and deployed separately, so these are current-reference figures, not
+carried over from the Phase 0 probes.
+
 | | `opt-level = 3` | `opt-level = "z"` | penalty |
 |---|---|---|---|
-| ML-DSA-65 verify | 77.1M (19.3%) | 207,360,903 (51.8%) | **2.69×** |
-| ML-DSA-44 verify | 51.1M (12.8%) | 126,234,787 (31.6%) | 2.47× |
-| resource fee | 90,557 | 181,726 | 2.01× |
+| contract wasm | 61,457 B (46% of limit) | 33,384 B (25%) | — |
+| **ML-DSA-65 verify** | **77,519,116 (19.4%)** | **204,957,239 (51.2%)** | **2.64×** |
+| ML-DSA-44 verify | 51,025,589 (12.8%) | 124,920,531 (31.2%) | 2.45× |
+| no-op (VM instantiation) | 2,515,683 | 1,516,930 | 0.60× |
+| resource fee, ML-DSA-65 | 90,837 | 180,044 | 1.98× |
+
+Net of the VM baseline the penalty on the cryptographic work alone is **2.71×**
+for ML-DSA-65 and 2.54× for ML-DSA-44.
+
+`opt-level = "z"` genuinely wins on VM instantiation — 1,516,930 against
+2,515,683, because there is less wasm to load — then loses ~128M on the
+verification. The trade is real; it is simply enormously lopsided here.
+
+Deployed for this comparison: `opt-level = 3`
+`CCH655J7I7WCNF2SAR4BKY6QAMP45UMYHAFXLMNFJ7NJUXI5LGGQB2GY`,
+`opt-level = "z"` `CCZO6X4AXNVPEKRT4CRV57U2M7QDLZEMHAAS5VHICZAJRKH7WANTGAQC`.
 
 Full detail: [`writeups/opt-level-and-lattice-crypto-on-soroban.md`](writeups/opt-level-and-lattice-crypto-on-soroban.md).
 

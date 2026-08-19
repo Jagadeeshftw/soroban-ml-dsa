@@ -10,12 +10,12 @@ Measured on Stellar testnet, the same ML-DSA-65 verification compiled two ways:
 
 | | `opt-level = 3` | `opt-level = "z"` |
 |---|---|---|
-| Contract wasm | 59,833 B (46% of the 131,072 limit) | 32,583 B (25%) |
-| CPU instructions | **77,119,386** | **207,360,903** |
-| Share of the 400M per-transaction budget | **19.3%** | **51.8%** |
-| Resource fee | 90,557 stroops | 181,726 stroops |
+| Contract wasm | 61,457 B (46% of the 131,072 limit) | 33,384 B (25%) |
+| CPU instructions | **77,519,116** | **204,957,239** |
+| Share of the 400M per-transaction budget | **19.4%** | **51.2%** |
+| Resource fee | 90,837 stroops | 180,044 stroops |
 
-**2.69x the CPU and 2.01x the fee, to save 27 KB of a size budget that had 71 KB
+**2.64x the CPU and 1.98x the fee, to save 28 KB of a size budget that had 70 KB
 spare.**
 
 ## Background, briefly
@@ -46,9 +46,9 @@ Lattice cryptography breaks that assumption. Tight arithmetic loops are exactly
 the code where `opt-level = 3` earns its keep through unrolling, inlining and
 better codegen, and exactly the code `"z"` penalises hardest.
 
-The consequence is a threshold effect rather than a gradual one. At 19.3% of the
+The consequence is a threshold effect rather than a gradual one. At 19.4% of the
 transaction budget, verification leaves 80% of the transaction for actual work.
-At 51.8% it leaves 48%, and composing it with anything substantial becomes
+At 51.2% it leaves 49%, and composing it with anything substantial becomes
 awkward. **Same source, same crate, same network — one profile line.**
 
 ## The tradeoff is real, just lopsided
@@ -58,22 +58,22 @@ is less wasm to load and parse:
 
 | | `opt-level = 3` | `opt-level = "z"` |
 |---|---|---|
-| No-op call (VM instantiation + dispatch) | 2,438,881 | 1,470,150 |
+| No-op call (VM instantiation + dispatch) | 2,515,683 | 1,516,930 |
 
-`"z"` saves about 1M instructions on every call and then loses about 130M on the
+`"z"` saves about 1M instructions on every call and then loses about 128M on the
 verification. If your contract is dominated by dispatch rather than computation,
 `"z"` may well be right. If it does lattice arithmetic, it is not close.
 
-Net of the VM baseline, the penalty on the cryptographic work alone is **2.76x**.
+Net of the VM baseline, the penalty on the cryptographic work alone is **2.71x**.
 
-ML-DSA-44 shows the same pattern: 51,138,313 (12.8% of budget) at `3` versus
-126,234,787 (31.6%) at `"z"` — a 2.47x penalty.
+ML-DSA-44 shows the same pattern: 51,025,589 (12.8% of budget) at `3` versus
+124,920,531 (31.2%) at `"z"` — a 2.45x penalty.
 
 ## Practical guidance
 
 1. **Pin `opt-level = 3` in any contract doing lattice cryptography,** and record
    why in the manifest so it does not get tidied away later. Contract size is
-   unlikely to be your binding constraint — at 59,833 bytes we used 46% of the
+   unlikely to be your binding constraint — at 61,457 bytes we used 46% of the
    limit.
 2. **Do not benchmark Soroban cryptography on an inherited profile.** Measure
    both. A 2.7x swing is large enough to change an architectural decision, and
@@ -99,8 +99,8 @@ What is post-quantum there is the contract account's authorisation.)
 
 Per *ledger* the picture is tighter, and worth knowing if you are considering
 this approach: the network-wide budget is 580,000,000 instructions per ledger,
-so one ML-DSA-65 authorisation costs 13.3% of it and roughly 14 fit in a ledger,
-against about 400 Ed25519-verifying contract calls. In-contract post-quantum
+so one ML-DSA-65 authorisation costs 13.4% of it and roughly 14 fit in a ledger,
+against about 390 Ed25519-verifying contract calls. In-contract post-quantum
 verification is viable for low-volume, high-value use; it is not a
 consumer-scale mechanism.
 
@@ -124,8 +124,8 @@ cost, not production readiness.
 Contracts, harness and the on-network simulation tool are in the project repo.
 Both variants are deployed on testnet:
 
-- `opt-level = 3` — `CDJXS5LYJOFH46NUBXZXMIU2MCSKCFJRVHIH6KX5TMJTJN4FU5NNVE3R`
-- `opt-level = "z"` — `CDZZEURTDIZUNKRW3YL7ZA4XAH27YR5API5HEHX5QBIYE5XG5QRWXUWC`
+- `opt-level = 3` — `CCH655J7I7WCNF2SAR4BKY6QAMP45UMYHAFXLMNFJ7NJUXI5LGGQB2GY`
+- `opt-level = "z"` — `CCZO6X4AXNVPEKRT4CRV57U2M7QDLZEMHAAS5VHICZAJRKH7WANTGAQC`
 
 Environment: rustc 1.97.1, `soroban-sdk` 27.0.6, testnet protocol 27. All key
 material derives from a fixed seed, so every figure is reproducible.
@@ -133,4 +133,4 @@ material derives from a fixed seed, so every figure is reproducible.
 [cap87]: https://github.com/stellar/stellar-protocol/blob/master/core/cap-0087.md
 [mldsa]: https://crates.io/crates/ml-dsa
 [fips204]: https://crates.io/crates/fips204
-[tx]: https://stellar.expert/explorer/testnet/tx/8aa95e1a7ffb5937fd82d608335c50ab0b6a8f6566bd674e5351fa52ea3fbcf4
+[tx]: https://stellar.expert/explorer/testnet/tx/5f62349d0b8faeb61746fe457f461ad7fe4d03044c976163ac14f5b52215f4b9

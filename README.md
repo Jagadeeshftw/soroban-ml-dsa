@@ -118,10 +118,10 @@ at 4.3%.
 
 | | `opt-level = 3` | `opt-level = "z"` |
 |---|---|---|
-| ML-DSA-65 verify | 77,119,386 (19.3%) | 207,360,903 (51.8%) |
-| Contract wasm | 59,833 B | 32,583 B |
+| ML-DSA-65 verify | 77,519,116 (19.4%) | 204,957,239 (51.2%) |
+| Contract wasm | 61,457 B | 33,384 B |
 
-**2.69x CPU penalty** for the common Soroban size-optimised default.
+**2.64x CPU penalty** for the common Soroban size-optimised default.
 → [Write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md)
 
 ## Documents
@@ -132,7 +132,7 @@ at 4.3%.
 | [Phase 0.5 verification](phase-0.5-verification.md) | How the measurement method was validated, and the ledger-limit finding. Figures measured against the Phase 0 probes; superseded by BENCHMARK.md by 0.5%. |
 | [Phase 0 investigation](phase-0-report.md) | Crate survey, CAP-0087 status, `__check_auth` findings. **Figures and framing superseded** — retained as the record. |
 | [MVP plan](Pq-sdk-stellar-mvp-plan.md) | Scope, architecture, milestones, amendment history. |
-| [opt-level write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md) | Standalone: the 2.69x compiler-flag finding. |
+| [opt-level write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md) | Standalone: the 2.64x compiler-flag finding. |
 | [CAP-0087 discussion post](outreach/cap-0087-discussion-post.md) | Draft for the CAP discussion thread. |
 | [Library vendoring note](outreach/ml-dsa-library-vendoring-note.md) | `ml-dsa` vs `fips204`, answering CAP-0087's vendoring question. |
 | [`phase0/`](phase0/) | Probe contracts and measurement harness. |
