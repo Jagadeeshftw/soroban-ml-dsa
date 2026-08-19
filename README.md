@@ -55,8 +55,21 @@ mechanism.
 
 ## Reproduce
 
-Requires Rust 1.85+ and `rustup target add wasm32v1-none`
+```sh
+./demo.sh
+```
+
+No configuration and no funded account needed. Checks the toolchain, runs every
+conformance suite, creates and funds a throwaway testnet account, deploys both
+contracts, authorises a real transaction with an ML-DSA-65 signature, and
+reproduces the cost tables on-network — then prints a transaction hash you can
+check on any explorer. Testnet only, costs nothing.
+
+Requires Rust 1.85+, the `stellar` CLI, and `rustup target add wasm32v1-none`
 (**not** `wasm32-unknown-unknown` — current `soroban-sdk` rejects it).
+
+<details><summary>Or run the pieces individually</summary>
+
 
 ```sh
 # the SDK crates
@@ -73,6 +86,7 @@ cd ../../crates/pq-cli && cargo run --release --bin bench -- <SOURCE_G...> <VERI
 # authorise a real transaction through pq-stellar
 PQ_SECRET=<S...> cargo run --release --bin authorize -- <SOURCE_G...> <ACCOUNT_C...> auth
 ```
+</details>
 
 <details><summary>Phase 0 probe harness (frozen evidence)</summary>
 
@@ -128,6 +142,7 @@ at 4.3%.
 
 | Document | What it is |
 |---|---|
+| [**TECHNICAL-REPORT.md**](TECHNICAL-REPORT.md) | **Start here.** What was built, measured, and found; limitations; relationship to CAP-0087. |
 | [**BENCHMARK.md**](BENCHMARK.md) | **Current cost reference.** Ledger throughput, cost split, message-length linearity, secp256r1 baseline. Cite this for figures. |
 | [Phase 0.5 verification](phase-0.5-verification.md) | How the measurement method was validated, and the ledger-limit finding. Figures measured against the Phase 0 probes; superseded by BENCHMARK.md by 0.5%. |
 | [Phase 0 investigation](phase-0-report.md) | Crate survey, CAP-0087 status, `__check_auth` findings. **Figures and framing superseded** — retained as the record. |
