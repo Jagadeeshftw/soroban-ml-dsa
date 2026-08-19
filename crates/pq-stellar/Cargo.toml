@@ -1,0 +1,17 @@
+[package]
+name = "pq-stellar"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Stellar/Soroban adapter for pq-core: signature payload construction, XDR encoding, and authorization entries for post-quantum custom accounts."
+license = "Apache-2.0 OR MIT"
+publish = false
+
+[dependencies]
+pq-core = { path = "../pq-core" }
+# Pinned to the protocol-27 XDR our measurements were taken against.
+stellar-xdr = { version = "27.0.0", default-features = false, features = ["alloc", "std", "base64"] }
+sha2 = { version = "0.10", default-features = false }
+
+[dev-dependencies]
+hex = "0.4"
