@@ -15,27 +15,20 @@ costs, at both the per-transaction and the network-capacity limit.
 > carries **no Ed25519 signer**; authorization came solely from an ML-DSA-65
 > signature checked in `__check_auth`.
 
-> ### ⚠️ Read this before citing the result
+> ### ⚠️ Two things to read before citing this
 >
-> **What is post-quantum:** the *contract account's authorization*. This is
-> QPP Stage 1 — a quantum-safe Soroban contract account.
+> **Scope.** What is post-quantum is the *contract account's authorization*
+> (QPP Stage 1). The *transaction envelope* is still Ed25519-signed — protocol 27
+> offers no alternative; that is what QPP Stage 2 changes in 2027. The correct
+> claim is "a quantum-safe Soroban contract account authorising a testnet
+> transaction," **not** "a post-quantum Stellar transaction." CAP-0087 draws the
+> same distinction.
 >
-> **What is not:** the *transaction envelope*, still signed with Ed25519 because
-> protocol 27 offers no alternative. That is what QPP Stage 2 (2027) changes.
->
-> The correct claim is **"a quantum-safe Soroban contract account authorising a
-> testnet transaction."** Not "a post-quantum Stellar transaction." CAP-0087
-> draws the same distinction: it does not make transaction signatures,
-> account master keys or the overlay post-quantum.
-
-> ### ⚠️ No audited implementation exists
->
-> This uses [`ml-dsa`](https://crates.io/crates/ml-dsa) 0.1.1, which states it
-> has never been independently audited. The alternative,
-> [`fips204`](https://crates.io/crates/fips204), carries the same warning.
-> **There is no audited pure-Rust ML-DSA implementation today.** Differential
-> testing plus NIST ACVP and Wycheproof vectors is *mitigation, not resolution.*
-> Testnet only. Not production-ready.
+> **Assurance.** [`ml-dsa`](https://crates.io/crates/ml-dsa) 0.1.1 states it has
+> never been independently audited; [`fips204`](https://crates.io/crates/fips204)
+> carries the same warning. **No audited pure-Rust ML-DSA implementation exists
+> today.** Differential testing plus ACVP/Wycheproof is *mitigation, not
+> resolution.* Testnet only, not production-ready.
 
 ## Results
 
@@ -57,29 +50,6 @@ parallel clusters under [CAP-0063](https://github.com/stellar/stellar-protocol/b
 per-ledger compute — about 28x fewer per ledger than an Ed25519-verifying
 contract call.** Viable for low-volume, high-value use; not a consumer-scale
 mechanism.
-
-### Per transaction
-
-| Operation | instructions | % of 400M tx budget | resource fee |
-|---|---|---|---|
-| ML-DSA-65 in contract | 77,119,386 | 19.3% | 90,557 stroops |
-| ML-DSA-44 in contract | 51,138,313 | 12.8% | 65,023 stroops |
-| Ed25519 host function | 2,887,282 | 0.7% | 15,031 stroops |
-| no-op (VM baseline) | 2,438,881 | 0.6% | 14,037 stroops |
-
-Net of VM baseline, ML-DSA-65 costs **167x** an Ed25519 host-function call.
-Non-CPU resources are not close to binding — largest is on-wire transaction size
-at 4.3%.
-
-### Compiler flags matter more than expected
-
-| | `opt-level = 3` | `opt-level = "z"` |
-|---|---|---|
-| ML-DSA-65 verify | 77,119,386 (19.3%) | 207,360,903 (51.8%) |
-| Contract wasm | 59,833 B | 32,583 B |
-
-**2.69x CPU penalty** for the common Soroban size-optimised default.
-→ [Write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md)
 
 ## Reproduce
 
@@ -104,6 +74,31 @@ PQ_SECRET=<S...> cargo run --release --bin submit -- <SOURCE_G...> <ACCOUNT_C...
 All key material derives from the fixed seed `[42u8; 32]` — every figure is
 deterministic. Deployed contracts are listed in
 [the verification report](phase-0.5-verification.md#testnet-artefacts).
+
+## Supporting detail
+
+### Per transaction
+
+| Operation | instructions | % of 400M tx budget | resource fee |
+|---|---|---|---|
+| ML-DSA-65 in contract | 77,119,386 | 19.3% | 90,557 stroops |
+| ML-DSA-44 in contract | 51,138,313 | 12.8% | 65,023 stroops |
+| Ed25519 host function | 2,887,282 | 0.7% | 15,031 stroops |
+| no-op (VM baseline) | 2,438,881 | 0.6% | 14,037 stroops |
+
+Net of VM baseline, ML-DSA-65 costs **167x** an Ed25519 host-function call.
+Non-CPU resources are not close to binding — largest is on-wire transaction size
+at 4.3%.
+
+### Compiler flags matter more than expected
+
+| | `opt-level = 3` | `opt-level = "z"` |
+|---|---|---|
+| ML-DSA-65 verify | 77,119,386 (19.3%) | 207,360,903 (51.8%) |
+| Contract wasm | 59,833 B | 32,583 B |
+
+**2.69x CPU penalty** for the common Soroban size-optimised default.
+→ [Write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md)
 
 ## Documents
 
