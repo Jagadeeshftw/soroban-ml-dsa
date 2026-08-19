@@ -1,0 +1,24 @@
+[package]
+name = "pq-core"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Scheme-agnostic post-quantum signature traits, with ML-DSA-44/65 (FIPS 204). no_std, chain-agnostic."
+license = "Apache-2.0 OR MIT"
+publish = false
+
+[features]
+default = []
+# Enables `std::error::Error` for `PqError`. The crate is `no_std` by default
+# and must remain buildable for `wasm32v1-none`.
+std = []
+
+[dependencies]
+ml-dsa = { version = "0.1.1", default-features = false }
+
+[dev-dependencies]
+# Second, independent FIPS 204 implementation -- used only as a differential
+# testing oracle. Never a runtime dependency.
+fips204 = { version = "0.4.6", default-features = false, features = ["ml-dsa-44", "ml-dsa-65"] }
+serde_json = "1"
+hex = "0.4"
