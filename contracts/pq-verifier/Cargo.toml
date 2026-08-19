@@ -1,0 +1,24 @@
+[package]
+name = "pq-verifier"
+version = "0.1.0"
+edition = "2021"
+description = "Soroban benchmark/verifier contract: in-contract ML-DSA against the native host-function baselines."
+license = "Apache-2.0 OR MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+soroban-sdk = "27.0.6"
+pq-core = { path = "../../crates/pq-core" }
+
+[profile.release]
+# See writeups/opt-level-and-lattice-crypto-on-soroban.md -- "z" costs 2.69x CPU.
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+overflow-checks = false
+debug-assertions = false

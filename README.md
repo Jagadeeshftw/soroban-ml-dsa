@@ -9,11 +9,12 @@ costs, at both the per-transaction and the network-capacity limit.
 
 > ### Verifiable artifact
 >
-> **Transaction [`8aa95e1a7ffb5937fd82d608335c50ab0b6a8f6566bd674e5351fa52ea3fbcf4`](https://stellar.expert/explorer/testnet/tx/8aa95e1a7ffb5937fd82d608335c50ab0b6a8f6566bd674e5351fa52ea3fbcf4)**
-> — testnet ledger 4,217,131, `successful: true`.
-> Account [`CDTEFSSESKZ7G6WFILKGND4NCN3BWGRSPLLU2JTK6ZUHR77QLTGSK73R`](https://stellar.expert/explorer/testnet/contract/CDTEFSSESKZ7G6WFILKGND4NCN3BWGRSPLLU2JTK6ZUHR77QLTGSK73R)
+> **Transaction [`5f62349d0b8faeb61746fe457f461ad7fe4d03044c976163ac14f5b52215f4b9`](https://stellar.expert/explorer/testnet/tx/5f62349d0b8faeb61746fe457f461ad7fe4d03044c976163ac14f5b52215f4b9)**
+> — testnet ledger 4,219,543, `successful: true`.
+> Account [`CDDE2DU2VR4W2XSHIE62VYAFJ3VNIBDIV3IMGZ3N4MPISCKPW2EIIA3S`](https://stellar.expert/explorer/testnet/contract/CDDE2DU2VR4W2XSHIE62VYAFJ3VNIBDIV3IMGZ3N4MPISCKPW2EIIA3S)
 > carries **no Ed25519 signer**; authorization came solely from an ML-DSA-65
-> signature checked in `__check_auth`.
+> signature checked in `__check_auth`. Contract and client share one
+> verification implementation ([`pq-core`](crates/pq-core)).
 
 > ### ⚠️ Two things to read before citing this
 >
@@ -42,9 +43,10 @@ parallel clusters under [CAP-0063](https://github.com/stellar/stellar-protocol/b
 
 | Operation | % of ledger budget per call | per ledger | per second |
 |---|---|---|---|
-| **ML-DSA-65 in contract** | **13.3%** | **14** | **2.8** |
+| **ML-DSA-65 in contract** | **13.4%** | **14** | **2.8** |
 | ML-DSA-44 in contract | 8.8% | 22 | 4.4 |
-| Ed25519 via host function | 0.5% | 400 | 80.0 |
+| ECDSA secp256r1 host fn | 1.0% | 204 | 40.8 |
+| Ed25519 host fn | 0.5% | 390 | 78.0 |
 
 **One in-contract ML-DSA-65 authorization consumes 13.3% of the entire network's
 per-ledger compute — about 28x fewer per ledger than an Ed25519-verifying
@@ -55,6 +57,24 @@ mechanism.
 
 Requires Rust 1.85+ and `rustup target add wasm32v1-none`
 (**not** `wasm32-unknown-unknown` — current `soroban-sdk` rejects it).
+
+```sh
+# the SDK crates
+cd crates/pq-core    && cargo test --all-features   # ACVP, Wycheproof, differential
+cd ../pq-stellar     && cargo test                  # payload golden vector, safety boundary
+
+# contracts
+cd ../../contracts/pq-verifier && cargo build --release --target wasm32v1-none
+cd ../pq-account               && cargo build --release --target wasm32v1-none
+
+# on-network cost tables (Milestone 4)
+cd ../../crates/pq-cli && cargo run --release --bin bench -- <SOURCE_G...> <VERIFIER_C...>
+
+# authorise a real transaction through pq-stellar
+PQ_SECRET=<S...> cargo run --release --bin authorize -- <SOURCE_G...> <ACCOUNT_C...> auth
+```
+
+<details><summary>Phase 0 probe harness (frozen evidence)</summary>
 
 ```sh
 cd phase0/contract && cargo build --release --target wasm32v1-none
@@ -70,6 +90,7 @@ cargo run --release --bin simulate -- <SOURCE_G...> <PROBE_C...> <ACCOUNT_C...>
 # submit a real ML-DSA-authorised transaction
 PQ_SECRET=<S...> cargo run --release --bin submit -- <SOURCE_G...> <ACCOUNT_C...>
 ```
+</details>
 
 All key material derives from the fixed seed `[42u8; 32]` — every figure is
 deterministic. Deployed contracts are listed in
@@ -81,12 +102,15 @@ deterministic. Deployed contracts are listed in
 
 | Operation | instructions | % of 400M tx budget | resource fee |
 |---|---|---|---|
-| ML-DSA-65 in contract | 77,119,386 | 19.3% | 90,557 stroops |
-| ML-DSA-44 in contract | 51,138,313 | 12.8% | 65,023 stroops |
-| Ed25519 host function | 2,887,282 | 0.7% | 15,031 stroops |
-| no-op (VM baseline) | 2,438,881 | 0.6% | 14,037 stroops |
+| ML-DSA-65 in contract | 77,519,116 | 19.4% | 90,837 stroops |
+| ML-DSA-44 in contract | 51,025,589 | 12.8% | 64,944 stroops |
+| ECDSA secp256r1 host fn | 5,661,133 | 1.4% | 17,147 stroops |
+| Ed25519 host function | 2,963,805 | 0.7% | 15,084 stroops |
+| no-op (VM baseline) | 2,515,683 | 0.6% | 14,090 stroops |
 
-Net of VM baseline, ML-DSA-65 costs **167x** an Ed25519 host-function call.
+Net of VM baseline, ML-DSA-65 costs **167x** Ed25519 and **24x** secp256r1.
+Full tables, the decode/verify cost split, and the message-length sweep:
+[BENCHMARK.md](BENCHMARK.md).
 Non-CPU resources are not close to binding — largest is on-wire transaction size
 at 4.3%.
 
@@ -104,7 +128,8 @@ at 4.3%.
 
 | Document | What it is |
 |---|---|
-| [**Phase 0.5 verification**](phase-0.5-verification.md) | **Authoritative measurements.** On-network, ledger analysis, submitted transaction. Cite this. |
+| [**BENCHMARK.md**](BENCHMARK.md) | **Current cost reference.** Ledger throughput, cost split, message-length linearity, secp256r1 baseline. Cite this for figures. |
+| [Phase 0.5 verification](phase-0.5-verification.md) | How the measurement method was validated, and the ledger-limit finding. Figures measured against the Phase 0 probes; superseded by BENCHMARK.md by 0.5%. |
 | [Phase 0 investigation](phase-0-report.md) | Crate survey, CAP-0087 status, `__check_auth` findings. **Figures and framing superseded** — retained as the record. |
 | [MVP plan](Pq-sdk-stellar-mvp-plan.md) | Scope, architecture, milestones, amendment history. |
 | [opt-level write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md) | Standalone: the 2.69x compiler-flag finding. |

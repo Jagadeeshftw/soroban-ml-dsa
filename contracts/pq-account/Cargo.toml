@@ -1,0 +1,27 @@
+[package]
+name = "pq-account"
+version = "0.1.0"
+edition = "2021"
+description = "Soroban custom account authorising via a post-quantum signature, built on pq-core."
+license = "Apache-2.0 OR MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+soroban-sdk = "27.0.6"
+# The contract and the client-side adapter share one verification
+# implementation. Nothing ML-DSA-specific is inlined here.
+pq-core = { path = "../../crates/pq-core" }
+
+[profile.release]
+# Load-bearing: opt-level = "z" costs 2.69x CPU for lattice arithmetic.
+# See writeups/opt-level-and-lattice-crypto-on-soroban.md
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+overflow-checks = false
+debug-assertions = false
