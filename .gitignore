@@ -10,3 +10,6 @@ outreach/
 # Accurate and useful, but not material an SDF reviewer should find in a repo
 # linked from a CAP discussion thread.
 internal/
+
+# Funding application drafts. Working material, kept in the private repo.
+applications/
