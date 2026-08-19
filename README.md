@@ -145,8 +145,6 @@ at 4.3%.
 | [**TECHNICAL-REPORT.md**](TECHNICAL-REPORT.md) | **Start here.** What was built, measured, and found; limitations; relationship to CAP-0087. |
 | [**BENCHMARK.md**](BENCHMARK.md) | **Current cost reference.** Ledger throughput, cost split, message-length linearity, secp256r1 baseline. Cite this for figures. |
 | [opt-level write-up](writeups/opt-level-and-lattice-crypto-on-soroban.md) | Standalone: the 2.64x compiler-flag finding. |
-| [CAP-0087 discussion post](outreach/cap-0087-discussion-post.md) | Draft for the CAP discussion thread. |
-| [Library vendoring note](outreach/ml-dsa-library-vendoring-note.md) | `ml-dsa` vs `fips204`, answering CAP-0087's vendoring question. |
 | [`phase0/`](phase0/) | Probe contracts and measurement harness. |
 
 ## Relationship to CAP-0087
